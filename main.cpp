@@ -1,30 +1,38 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <utility>
+#include <vector>
 class Track {
-public:
     std::string name;
-    //std::tm data;
-    int length;
 
+public:
+    std::string getName()
+    {
+        return name;
+    }
+    void setName(std::string newName)
+    {
+        name = newName;
+    }
 };
 
 
 class Player{
-    static const int capacity = 10;
-
+    Track newObject;
     int numberPlayTrack = -1;
+    std::vector<Track> tracks;
 
 public:
-    Track tracks[10];
+
     void Play() {
         if (numberPlayTrack == -1) {
             std::cout << "Enter track name: ";
             std::string UserInput;
             std::cin >> UserInput;
-            for (int i = 0; i < capacity; i++) {
-                if (UserInput == tracks[i].name) {
-                    std::cout << "Play: " << tracks[i].name;
+            for (int i = 0; i < tracks.size(); i++) {
+                if (UserInput == tracks[i].getName()) {
+                    std::cout << "Play: " << tracks[i].getName();
                     numberPlayTrack = i;
                 }
             }
@@ -34,45 +42,47 @@ public:
 
     void Pause() {
         if (numberPlayTrack != -1) {
-            std::cout << "Paused: " << tracks[numberPlayTrack].name;
+            std::cout << "Paused: " << tracks[numberPlayTrack].getName();
         }
     }
 
     void Next(){
-        int tmp = std::rand() % capacity - 1;
-        std::cout << "Play: " << tracks[tmp].name;
+        int tmp = std::rand() % tracks.size() - 1;
+        std::cout << "Play: " << tracks[tmp].getName();
         numberPlayTrack = tmp;
     }
 
     void Stop(){
         if (numberPlayTrack != -1) {
-            std::cout << "Stop: " << tracks[numberPlayTrack].name;
+            std::cout << "Stop: " << tracks[numberPlayTrack].getName();
             numberPlayTrack = -1;
         }
     }
+
+    void Add() {
+        std::cout << "Enter track name: ";
+        std::string newTrack;
+        std::cin >> newTrack;
+        //std::getline (std::cin, newTrack);
+        tracks.push_back(newObject);
+        tracks[tracks.size() - 1].setName(newTrack) ;
+
+    }
+
 };
 
 int main() {
     Player* player = new Player();
     std::string cmd;
-    player->tracks[0].name = "Track_0";
-    player->tracks[1].name = "Track_1";
-    player->tracks[2].name = "Track_2";
-    player->tracks[3].name = "Track_3";
-    player->tracks[4].name = "Track_4";
-    player->tracks[5].name = "Track_5";
-    player->tracks[6].name = "Track_6";
-    player->tracks[7].name = "Track_7";
-    player->tracks[8].name = "Track_8";
-    player->tracks[9].name = "Track_9";
 
-    while (true) {
+       while (true) {
         std::cin >> cmd;
         if (cmd == "play") player->Play();
         else if (cmd == "pause") player->Pause();
         else if (cmd == "next") player->Next();
         else if (cmd == "stop") player->Stop();
-        else if (cmd == "exit") return 0;
+        else if (cmd == "add") player->Add();
+        else if (cmd == "exit") break;
         else std::cerr << "Invalid command";
     }
 
