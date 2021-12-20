@@ -3,8 +3,11 @@
 #include <cstdlib>
 #include <utility>
 #include <vector>
+#include <iomanip>
 class Track {
     std::string name;
+    int duration = 0;
+    std::tm creationTime;
 
 public:
     std::string getName()
@@ -15,11 +18,26 @@ public:
     {
         name = newName;
     }
+    int GetDuration()
+    {
+        return duration;
+    }
+    void SetDuration(int newValue)
+    {
+        if (newValue > 0) duration = newValue;
+    }
+    tm GetCreationTime()
+    {
+        return creationTime;
+    }
+    void SetCreationTime(std::tm* time)
+    {
+        creationTime = *time;
+    }
 };
 
 
 class Player{
-    Track newObject;
     int numberPlayTrack = -1;
     std::vector<Track> tracks;
 
@@ -32,7 +50,17 @@ public:
             std::cin >> UserInput;
             for (int i = 0; i < tracks.size(); i++) {
                 if (UserInput == tracks[i].getName()) {
-                    std::cout << "Play: " << tracks[i].getName();
+                    std::cout << "Play: " << tracks[i].getName() << " ";
+                    std::cout << tracks[i].GetDuration() << "sec ";
+                    std::time_t now = std::time(nullptr);
+                    std::tm* time = std::localtime(&now);
+                    time->tm_hour = tracks[i].GetCreationTime().tm_hour;
+                    time->tm_min = tracks[i].GetCreationTime().tm_min;
+                    time->tm_sec = tracks[i].GetCreationTime().tm_sec;
+                    time->tm_year = tracks[i].GetCreationTime().tm_year;
+                    time->tm_mon = tracks[i].GetCreationTime().tm_mon;
+                    time->tm_year = tracks[i].GetCreationTime().tm_year;
+                    std::cout << std::put_time(time, "%H:%M:%S %d/%m/%Y");
                     numberPlayTrack = i;
                 }
             }
@@ -60,13 +88,18 @@ public:
     }
 
     void Add() {
+        Track newTrack;
+        std::time_t now = std::time(nullptr);
+        newTrack.SetCreationTime(std::localtime(&now));
+        std::string nameTrack;
         std::cout << "Enter track name: ";
-        std::string newTrack;
-        std::cin >> newTrack;
-        //std::getline (std::cin, newTrack);
-        tracks.push_back(newObject);
-        tracks[tracks.size() - 1].setName(newTrack) ;
-
+        std::cin >> nameTrack;
+        newTrack.setName(nameTrack);
+        int newTrackDuration;
+        std::cout << "Enter track duration: ";
+        std::cin >> newTrackDuration;
+        newTrack.SetDuration(newTrackDuration);
+        tracks.push_back(newTrack);
     }
 
 };
